@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Python-da Binomial Əmsal</title>
+    
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            line-height: 1.6;
+            background-color: #1a1a1a; /* Tünd fon */
+            color: #e0e0e0; /* Açıq mətn */
+            margin: 0;
+            padding: 0;
+        }
+        main {
+            max-width: 900px;
+            margin: 20px auto;
+            padding: 25px;
+            background-color: #2b2b2b; /* Əsas məzmun üçün bir az daha açıq tünd fon */
+            border-radius: 8px;
+            border: 1px solid #3d3d3d; /* Zəif sərhəd */
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+        h1 {
+            color: #ffffff; /* Açıq başlıq */
+            border-bottom: 2px solid #4a4a4a; /* Tünd ayırıcı xətt */
+            padding-bottom: 10px;
+        }
+        h2 {
+            color: #f1f1f1; /* Açıq başlıq */
+            border-bottom: 1px solid #444; /* Tünd ayırıcı xətt */
+            padding-bottom: 5px;
+            margin-top: 40px;
+        }
+        h3 {
+            color: #b0b0b0; /* Bir az daha sönük başlıq */
+            margin-top: 30px;
+        }
+        p, li {
+            font-size: 16px;
+            color: #e0e0e0; /* Açıq mətn */
+        }
+        
+        /* Linklər (əgər olarsa) */
+        a {
+            color: #569cd6; /* Mavi rəngli linklər */
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+        
+        /* Sətirdaxili kod bloku */
+        code {
+            font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace;
+            background-color: #3c3c3c; /* Kod üçün tünd fon */
+            color: #f1f1f1;
+            padding: 2px 5px;
+            border-radius: 4px;
+            font-size: 0.95em;
+        }
+        
+        /* Böyük kod bloku (VS Code Dark Theme-ə bənzər) */
+        pre {
+            background-color: #1e1e1e;
+            color: #d4d4d4;
+            padding: 20px;
+            border-radius: 8px;
+            overflow-x: auto;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            border: 1px solid #333;
+        }
+        pre code {
+            background-color: transparent;
+            padding: 0;
+            color: inherit;
+        }
+        /* Python kod rəngləməsi üçün stillər */
+        pre code .token.comment { color: #6a9955; }
+        pre code .token.keyword { color: #569cd6; }
+        pre code .token.string { color: #ce9178; }
+        pre code .token.number { color: #b5cea8; }
+        pre code .token.function { color: #dcdcaa; }
+        pre code .token.punctuation { color: #d4d4d4; }
+        pre code .token.operator { color: #d4d4d4; }
+        
+        /* Tapşırıq bloku */
+        .task-box {
+            background-color: #2a3a4a; /* Tünd göy fon */
+            border: 1px solid #3a5a7a;
+            border-left: 5px solid #569cd6; /* Açıq göy vurğu */
+            padding: 15px 20px;
+            margin-top: 20px;
+            border-radius: 5px;
+        }
+
+        /* Tapşırıq blokundakı gizli cavab (details/summary) */
+        details {
+            margin-top: 15px;
+        }
+        summary {
+            cursor: pointer;
+            color: #f1f1f1;
+            font-weight: bold;
+        }
+
+        /* Yeni əlavə edilmiş stillər */
+        .reference {
+            background: linear-gradient(180deg, rgba(86,156,214,0.06), rgba(86,156,214,0.02));
+            border: 1px solid rgba(86,156,214,0.12);
+            padding: 12px 16px;
+            border-radius: 6px;
+            margin-top: 20px;
+        }
+        .pascal-row { text-align: center; margin: 6px 0; font-family: monospace; }
+        .quick-list { display: grid; grid-template-columns: repeat(auto-fit,minmax(220px,1fr)); gap: 12px; margin-top: 12px; }
+        .card { background-color: #232323; padding: 12px; border-radius: 6px; border: 1px solid #333; }
+
+    </style>
+</head>
+<body>
+    <main>
+        <h1>Python-da Binomial Əmsal (Kombinasiya)</h1>
+
+        <p>Binomial əmsal, riyaziyyatda və proqramlaşdırmada tez-tez qarşılaşdığımız vacib bir anlayışdır. Bu, $n$ elementdən ibarət çoxluqdan $k$ elementi neçə fərqli üsulla seçə biləcəyimizi göstərir.</p>
+
+        <p>Bu halda, elementlərin sıralanması fərqli olan dəstlər (lakin tərkibi fərqli olmayan) eyni hesab olunur. Seçimlərin bu xüsusiyyətinə görə onlar yerləşdirmələrdən (permutations) fərqlənirlər.</p>
+
+        <p>Məsələn, 5 elementdən ibarət olan çoxluğu nəzərdən keçirək: <code>{1, 2, 3, 4, 5}</code>. <code>{2, 1, 3}</code> və <code>{3, 2, 1}</code> dəstləri seçim (kombinasiya) olaraq eyni hesab olunur, çünki eyni elementlərdən <code>{1, 2, 3}</code> ibarətdir.</p>
+
+        <p>$n$-dən $k$-yə qədər seçimlərin sayının (yəni <strong>\(C_n^k\)</strong>) hesablanması üçün formula belədir:</p>
+
+        $$C_n^k = \frac{n!}{k! \cdot (n-k)!}$$
+
+        <p><strong>\(C_n^k\)</strong> ədədləri <strong>binomial əmsallar</strong> adlanır.</p>
+
+        <h2>Python-da Binomial Əmsalın Hesablanması</h2>
+
+        <p>Python-da binomial əmsalları hesablamağın bir neçə yolu var.</p>
+
+        <h3>Üsul 1: <code>math.comb</code> funksiyası (Python 3.8+)</h3>
+
+        <p>Python 3.8 versiyasından başlayaraq, <code>math</code> moduluna birbaşa binomial əmsalı hesablayan <code>comb()</code> funksiyası əlavə edilib. Bu, ən sadə və səmərəli yoldur.</p>
+
+<pre><code class="language-python"><span class="token.keyword">import</span> math
+
+<span class="token.comment"># 5 elementdən 3 element seçməyin yollarının sayı</span>
+n <span class="token.operator">=</span> <span class="token.number">5</span>
+k <span class="token.operator">=</span> <span class="token.number">3</span>
+combinations <span class="token.operator">=</span> math<span class="token.punctuation">.</span><span class="token.function">comb</span>(n, k)
+<span class="token.function">print</span>(f"{n} elementdən {k} element seçməyin {combinations} yolu var.")
+<span class="token.comment"># Nəticə: 5 elementdən 3 element seçməyin 10 yolu var.</span></code></pre>
+
+        <h3>Üsul 2: Faktorial Formulası ilə</h3>
+
+        <p>Əgər <code>math.comb</code> funksiyası olmayan daha köhnə bir Python versiyasından istifadə edirsinizsə, formulu birbaşa <code>math.factorial</code> istifadə edərək tətbiq edə bilərsiniz.</p>
+
+<pre><code class="language-python"><span class="token.keyword">import</span> math
+
+<span class="token.keyword">def</span> <span class="token.function">calculate_combinations</span>(n, k):
+    <span class="token.comment"># Kənar halları yoxlayaq</span>
+    <span class="token.keyword">if</span> k <span class="token.operator">&lt;</span> <span class="token.number">0</span> <span class="token.keyword">or</span> k <span class="token.operator">&gt;</span> n:
+        <span class="token.keyword">return</span> <span class="token.number">0</span>
+    
+    <span class="token.comment"># Formulu tətbiq edirik</span>
+    <span class="token.comment"># Tam bölmə (//) istifadə edirik, çünki nəticə həmişə tam ədəddir</span>
+    <span class="token.keyword">return</span> math<span class="token.punctuation">.</span><span class="token.function">factorial</span>(n) <span class="token.operator">//</span> (math<span class="token.punctuation">.</span><span class="token.function">factorial</span>(k) <span class="token.operator">*</span> math<span class="token.punctuation">.</span><span class="token.function">factorial</span>(n <span class="token.operator">-</span> k))
+
+n <span class="token.operator">=</span> <span class="token.number">5</span>
+k <span class="token.operator">=</span> <span class="token.number">3</span>
+<span class="token.function">print</span>(f"C({n}, {k}) = {calculate_combinations(n, k)}")
+<span class="token.comment"># Nəticə: C(5, 3) = 10</span></code></pre>
+
+        <h2>Xüsusi hallar və nümunələr</h2>
+
+        <h3>Nümunə: <strong>\(C_n^0 = 1\)</strong></h3>
+        <p><strong>İzah:</strong> <em>n</em> elementdən ibarət olan çoxluqdan sıfır element seçdiyimiz zaman əslində "boş" seçim edirik. Heç bir şey seçməmək özü bir seçim üsuludur. Ona görə:</p>
+        $$C_n^0 = \frac{n!}{0! \cdot (n-0)!} = \frac{n!}{1 \cdot n!} = 1$$
+
+<pre><code class="language-python"><span class="token.keyword">import</span> math
+<span class="token.function">print</span>(f"C(10, 0) = {math.comb(10, 0)}")
+<span class="token.comment"># Nəticə: C(10, 0) = 1</span></code></pre>
+
+        <h3>Nümunə: <strong>\(C_n^1 = n\)</strong></h3>
+        <p><strong>İzah:</strong> <em>n</em> elementdən ibarət olan çoxluqdan bir element seçdiyimiz zaman <em>n</em> seçmə variantımız var. Ona görə:</p>
+        $$C_n^1 = \frac{n!}{1! \cdot (n-1)!} = n$$
+
+<pre><code class="language-python"><span class="token.keyword">import</span> math
+<span class="token.function">print</span>(f"C(5, 1) = {math.comb(5, 1)}")
+<span class="token.comment"># Nəticə: C(5, 1) = 5</span></code></pre>
+
+        <h3>Nümunə: <strong>\(C_n^2 = \frac{n \cdot (n-1)}{2}\)</strong></h3>
+        <p><strong>İzah:</strong> <em>n</em> elementdən 2 element seçdiyimiz zaman cütlüklər təşkil edirik. Sıralama nəzərə alınmadığı üçün nəticəni 2-yə bölürük.</p>
+        $$C_n^2 = \frac{n!}{2! \cdot (n-2)!} = \frac{n \cdot (n-1)}{2}$$
+
+<pre><code class="language-python"><span class="token.keyword">import</span> math
+n <span class="token.operator">=</span> <span class="token.number">5</span>
+<span class="token.function">print</span>(f"C({n}, 2) = {math.comb(n, 2)}")
+<span class="token.function">print</span>(f"Formula: (n * (n - 1)) / 2 = {(n * (n - 1)) // 2}")
+<span class="token.comment"># Nəticə: C(5, 2) = 10</span></code></pre>
+
+        <h3>Hesablama Nümunələri</h3>
+        <p>Aşağıdakı binomial əmsalların qiymətlərini Python ilə hesablayaq:</p>
+        <ul>
+            <li>$C_4^2 = 6$</li>
+            <li>$C_6^3 = 20$</li>
+            <li>$C_7^3 = 35$</li>
+        </ul>
+<pre><code class="language-python"><span class="token.keyword">import</span> math
+<span class="token.function">print</span>(f"C(4, 2) = {math.comb(4, 2)}")
+<span class="token.function">print</span>(f"C(6, 3) = {math.comb(6, 3)}")
+<span class="token.function">print</span>(f"C(7, 3) = {math.comb(7, 3)}")</code></pre>
+
+        <h2>Simmetriya Xüsusiyyəti: <strong>\(C_n^k = C_n^{n-k}\)</strong></h2>
+        <p><strong>İzah:</strong> <em>n</em> elementdən <em>k</em> elementi seçməyin sayı, <em>n</em> elementdən <em>(n-k)</em> elementi seçməyin (yəni kənarda saxlamağın) sayına bərabərdir. Bu, seçdiyimiz elementlər əvəzinə seçmədiklərimizə baxmağı ifadə edir.</p>
+        
+        <h3>Nümunə</h3>
+        <ul>
+            <li>$C_5^4 = C_5^{5-4} = C_5^1 = 5$</li>
+            <li>$C_6^4 = C_6^{6-4} = C_6^2 = 15$</li>
+        </ul>
+<pre><code class="language-python"><span class="token.keyword">import</span> math
+<span class="token.function">print</span>(f"C(6, 4) = {math.comb(6, 4)}")
+<span class="token.function">print</span>(f"C(6, 2) = {math.comb(6, 2)}")
+<span class="token.comment"># Nəticə: İkisi də 15-ə bərabərdir</span></code></pre>
+
+        <div class="task-box">
+            <h3>Tapşırıq</h3>
+            <p>Aşağıdakı binomial əmsalların qiymətlərini hesablayın. Cavablarınızı Python-un <code>math.comb</code> funksiyası ilə yoxlayın.</p>
+            <ol>
+                <li>$C_5^2$</li>
+                <li>$C_8^3$</li>
+                <li>$C_5^4$</li>
+                <li>$C_7^5$</li>
+                <li>$C_8^1$</li>
+                <li>$C_8^5$ (Simmetriya xüsusiyyətini $C_8^3$ ilə yoxlayın)</li>
+            </ol>
+            <details>
+                <summary>Cavabları göstər (Python kodu)</summary>
+<pre><code class="language-python"><span class="token.keyword">import</span> math
+<span class="token.function">print</span>(f"1) C(5, 2) = {math.comb(5, 2)}")  <span class="token.comment"># 10</span>
+<span class="token.function">print</span>(f"2) C(8, 3) = {math.comb(8, 3)}")  <span class="token.comment"># 56</span>
+<span class="token.function">print</span>(f"3) C(5, 4) = {math.comb(5, 4)}")  <span class="token.comment"># 5</span>
+<span class="token.function">print</span>(f"4) C(7, 5) = {math.comb(7, 5)}")  <span class="token.comment"># 21</span>
+<span class="token.function">print</span>(f"5) C(8, 1) = {math.comb(8, 1)}")  <span class="token.comment"># 8</span>
+<span class="token.function">print</span>(f"6) C(8, 5) = {math.comb(8, 5)}")  <span class="token.comment"># 56 (C(8,3) ilə eynidir)</span></code></pre>
+            </details>
+        </div>
+
+        <!-- Yeni əlavə olunan bölmələr: Binomial teoremi, Pascal üçbucağı və qısa referens -->
+        <h2>Əlavə: Binomial Teoremi və Pascal Üçbucağı</h2>
+        <p><strong>Binomial teoremi:</strong> Hər hansı real və ya kompleks ədədlər üçün</p>
+        $$ (x + y)^n = \sum_{k=0}^n C_n^k x^{n-k} y^k. $$
+        <p>Nümunə: \((x+y)^3 = C_3^0 x^3 + C_3^1 x^2 y + C_3^2 x y^2 + C_3^3 y^3 = x^3 + 3x^2y + 3xy^2 + y^3\).</p>
+
+        <div class="reference">
+            <strong>Pascal üçbucağı:</strong>
+            <p>Pascal üçbucağı hər sətrin mərkəzində binomial əmsalları göstərir. Hər element üstündəki iki elementin cəminə bərabərdir (yığma formulu ilə əlaqəsi var).</p>
+            <div class="pascal">
+                <div class="pascal-row">&nbsp;&nbsp;&nbsp;&nbsp;1</div>
+                <div class="pascal-row">&nbsp;&nbsp;&nbsp;1 &nbsp;&nbsp;&nbsp;1</div>
+                <div class="pascal-row">&nbsp;&nbsp;1 &nbsp;&nbsp;2 &nbsp;&nbsp;1</div>
+                <div class="pascal-row">&nbsp;1 &nbsp;&nbsp;3 &nbsp;&nbsp;3 &nbsp;&nbsp;1</div>
+                <div class="pascal-row">1 &nbsp;&nbsp;4 &nbsp;&nbsp;6 &nbsp;&nbsp;4 &nbsp;&nbsp;1</div>
+            </div>
+        </div>
+
+        <h3>Yığma (rekursiv) formula</h3>
+        <p>Binomial əmsallar üçün yığma (Pascal əlaqəsi):</p>
+        $$ C_n^k = C_{n-1}^{k-1} + C_{n-1}^k. $$
+        <p>Bu, Pascal üçbucağının quruluşu ilə tam uyğun gəlir — hər bir element yuxarıdakı iki elementi toplayaraq alınır.</p>
+
+        <h2>Qısa Referens (tez-tez istifadə olunan formullar və tətbiqlər)</h2>
+        <div class="quick-list">
+            <div class="card">
+                <h4>Əsas formula</h4>
+                <p>\(C_n^k = \dfrac{n!}{k!(n-k)!}\)</p>
+            </div>
+            <div class="card">
+                <h4>Simmetriya</h4>
+                <p>\(C_n^k = C_n^{n-k}\)</p>
+            </div>
+            <div class="card">
+                <h4>Binomial teoremi</h4>
+                <p>\((x+y)^n = \sum_{k=0}^n C_n^k x^{n-k} y^k\)</p>
+            </div>
+            <div class="card">
+                <h4>Tətbiqlər</h4>
+                <p>Ehtimal hesablamaları, kombinatorik problemlər, sinir şəbəkələrində bəzi nümunələr, statistik paylanmalar.</p>
+            </div>
+        </div>
+
+        <h2>Kompüter hesablanması üçün qeydlər</h2>
+        <ul>
+            <li>Python 3.8+ istifadə edirsinizsə <code>math.comb(n, k)</code> ən təhlükəsiz və sürətli üsuldur.</li>
+            <li>Böyük ədədlərlə işləyərkən factorial-larla düz işləmək yaddaş/hesablama problemi yarada bilər; məs.: iterativ və ya Pascal yanaşması daha sərfəlidir.</li>
+            <li>Modul üzrə hesablamalar üçün xüsusi alqoritmlər tələb olunur (məsələn, Fermatın kiçik teoremi ilə kombinasiya modul p üçün).</li>
+        </ul>
+
+        <div class="reference">
+            <strong>Əlavə tapşırıqlar (təklif):</strong>
+            <ol>
+                <li>Pascal üçbucağını proqramla çap et və hər sətrin orta simmetriyaya malik olduğunu yoxla.</li>
+                <li>Binomial teoreminin köməyi ilə \((1+1)^n\) ifadəsinin C( n, k ) toplanması ilə necə əlaqəli olduğunu göstər.</li>
+                <li>Böyük n üçün kombinasiya dəyərlərini modul 10^9+7 altında hesablayan funksiya yaz.</li>
+            </ol>
+        </div>
+
+    </main>
+</body>
+</html>
