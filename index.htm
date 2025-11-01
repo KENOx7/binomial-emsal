@@ -122,9 +122,22 @@
         .card { background-color: #232323; padding: 12px; border-radius: 6px; border: 1px solid #333; }
 
     </style>
-</head>
+
+    <script type="text/javascript">
+        function googleTranslateElementInit() {
+            new google.translate.TranslateElement({
+                pageLanguage: 'az', 
+                includedLanguages: 'en,ru', 
+                layout: google.translate.TranslateElement.InlineLayout.SIMPLE
+            }, 'google_translate_element');
+        }
+    </script>
+    <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+    </head>
 <body>
     <main>
+        
+        <div id="google_translate_element" style="padding: 10px 0; text-align: right; filter: invert(1) brightness(1.1);"></div>
         <h1>Python-da Binomial Əmsal (Kombinasiya)</h1>
 
         <p>Binomial əmsal, riyaziyyatda və proqramlaşdırmada tez-tez qarşılaşdığımız vacib bir anlayışdır. Bu, $n$ elementdən ibarət çoxluqdan $k$ elementi neçə fərqli üsulla seçə biləcəyimizi göstərir.</p>
@@ -252,7 +265,6 @@ n <span class="token.operator">=</span> <span class="token.number">5</span>
             </details>
         </div>
 
-        <!-- Yeni əlavə olunan bölmələr: Binomial teoremi, Pascal üçbucağı və qısa referens -->
         <h2>Əlavə: Binomial Teoremi və Pascal Üçbucağı</h2>
         <p><strong>Binomial teoremi:</strong> Hər hansı real və ya kompleks ədədlər üçün</p>
         $$ (x + y)^n = \sum_{k=0}^n C_n^k x^{n-k} y^k. $$
